@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <!-- Name of the world -->
+  <arg name="world"                                 default="planner_tutorial"/>
+  <!-- Path to the world file -->
+  <arg name="world_file"                            default="$(find smb_gazebo)/worlds/$(arg world).world"/>
+  <arg name="laser_enabled"							            default="true"/>
+    <!-- Load Gazebo world -->
+  <include file="$(find smb_highlevel_controller)/launch/smb_gazebo.launch"/>
+    <node name = "smb_highlevel_controller" pkg = "smb_highlevel_controller" type = "smb_highlevel_controller">
+      <rosparam file = "$(find smb_highlevel_controller)/config/para.yaml"/>
+    </node>
+</launch>
+
