@@ -19,6 +19,9 @@ SmbHighlevelController::SmbHighlevelController(ros::NodeHandle& nh)
   // create publishers on topic /cmd_vel
   vel_pub = nodeHandle.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
   viz_pub = nodeHandle.advertise<visualization_msgs::Marker>("visualization_marker", 10);
+  // service server
+  stop_srv = nodeHandle.advertiseService("/start_stop",
+  &SmbHighlevelController::start_stop, this);
   // pillar marker in RViz
   initPillarMarker();
   ROS_INFO("smb highlevel controller node launched");
@@ -61,16 +64,16 @@ void SmbHighlevelController::setVel(const float &vel, const std::string &dof)
 */
 void SmbHighlevelController::adjustSpeed(const float &dist)
 {
-  float vel = p_vel * (dist - 1.0); // stop at 0.2m away
-  if (vel > 5.0){
-    vel = 5.0;
-  }
-  else if(vel < 0.05){
-    vel = .0;
-    setVel(.0,"ang"); // do not turn either
-  }
+  // float vel = p_vel * (dist - 1.0); // stop at 0.2m away
+  // if (vel > 5.0){
+  //   vel = 5.0;
+  // }
+  // else if(vel < 0.05){
+  //   vel = .0;
+  //   setVel(.0,"ang"); // do not turn either
+  // }
 
-  setVel(vel, "forward");
+  // setVel(vel, "forward");
 }
 
 /*
@@ -92,7 +95,23 @@ void SmbHighlevelController::vizPillar()
   marker.pose.position.z = -1.0;
   viz_pub.publish(marker);
 }
-
+/*
+  ROS service callback function to start and stop robot
+*/
+bool SmbHighlevelController::start_stop(std_srvs::SetBool::Request &request,std_srvs::SetBool::Response &response)
+{
+  if (request.data) { // start
+        response.message = "Start Robot";
+        setVel(3.0, "forward");
+    }
+  else { // stop
+        response.message = "Stop Robot";
+        setVel(0.0, "forward");
+       }
+  ROS_INFO_STREAM(response.message);
+  response.success = true;
+  return true;
+}
 /*
   initialize pillar marker in RViz
 */
