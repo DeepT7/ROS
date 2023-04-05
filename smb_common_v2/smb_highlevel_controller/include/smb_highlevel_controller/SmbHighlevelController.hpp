@@ -4,6 +4,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/Twist.h>
 #include <visualization_msgs/Marker.h>
+#include <std_srvs/SetBool.h>
 #include <string>
 #include <cmath>
 #include <vector>
@@ -50,14 +51,18 @@ private:
 	ros::NodeHandle nodeHandle;
 	ros::Subscriber subscriber;
 	ros::Publisher vel_pub, viz_pub;
+	ros::ServiceServer stop_srv;
 	geometry_msgs::Twist msg;
 	visualization_msgs::Marker marker;
 	float p_ang, p_vel;
 	float pillar_pos[2];
-  void callbackFunc(const sensor_msgs::LaserScan &msg);
+  	void callbackFunc(const sensor_msgs::LaserScan &msg);
 
-  // initialize pillar marker in RViz
-  void initPillarMarker();
+  	// initialize pillar marker in RViz
+  	void initPillarMarker();
+  	bool start_stop(
+	std_srvs::SetBool::Request &request,
+	std_srvs::SetBool::Response &response);
 };
 
 } /* namespace */
